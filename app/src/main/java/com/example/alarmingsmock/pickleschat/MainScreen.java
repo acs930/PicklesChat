@@ -17,7 +17,7 @@ import android.net.wifi.p2p.WifiP2pManager.Channel;
 import android.net.wifi.p2p.WifiP2pManager.ChannelListener;
 import android.net.wifi.p2p.WifiP2pManager.ActionListener;
 
-
+//ughguhgugh
 public class MainScreen extends ActionBarActivity {
 
     private static final String TAG = MainScreen.class.getSimpleName();

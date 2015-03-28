@@ -9,40 +9,35 @@ import android.view.MenuItem;
 import android.view.View;
 
 
-public class ClientSelection extends ActionBarActivity {
+public class Game extends ActionBarActivity {
 
-
-    public int[] hostIds;
     private static final String TAG = ClientSelection.class.getSimpleName();
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_client_selection);
-
-        //We need to launch a discovery fuinction and populate the layout with buttons tht corresposnsd to the ids of the host!!!
-        //Fpor now this will be a single button
-
-
+        setContentView(R.layout.activity_game);
     }
 
 
-    public void onHostClick(View v)
+    public void onLeaveClick(View v)
     {
         //int whichButton = v.getId();
         Log.d(TAG, "ID: " + v.getId() + " ButtonClicked");
-        //Connect to the selected host, get the id of the host button and run the wifi connect fucntion
+        //Send a message to the server saying that the client has left the room
+        //Delete all sutff related to game that was stored locally
         Intent intent = new Intent(getApplicationContext(), LobbyMain.class);
         startActivity(intent);
 
     }
 
 
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_client_selection, menu);
+        getMenuInflater().inflate(R.menu.menu_game, menu);
         return true;
     }
 
@@ -59,22 +54,5 @@ public class ClientSelection extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    public void DiscoverHosts()
-    {
-        //populate the host array with different host ids
-    }
-
-    public void refresh()
-    {
-        //This will run the discovery thing
-        //add ids to the array
-        //and draw them to the screen every time the function is run
-    }
-
-    public boolean ConnectToHost()
-    {
-        return true;
     }
 }
