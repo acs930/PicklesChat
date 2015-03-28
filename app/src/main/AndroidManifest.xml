@@ -30,6 +30,18 @@
             android:name=".ClientSelection"
             android:label="@string/title_activity_client_selection" >
         </activity>
+        <activity
+            android:name=".LobbyMain"
+            android:label="@string/title_activity_lobby_main" >
+        </activity>
+        <activity
+            android:name=".Game"
+            android:label="@string/title_activity_game" >
+        </activity>
+        <activity
+            android:name=".Chat"
+            android:label="@string/title_activity_chat" >
+        </activity>
     </application>
 
 </manifest>
