@@ -1,6 +1,8 @@
 package com.example.alarmingsmock.pickleschat;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.wifi.p2p.WifiP2pManager;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,12 +16,20 @@ public class ClientSelection extends ActionBarActivity {
 
     public int[] hostIds;
     private static final String TAG = ClientSelection.class.getSimpleName();
-
+    public ClientSystem deviceClientSystem = new ClientSystem();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_client_selection);
+        deviceClientSystem.setManager((WifiP2pManager)getSystemService(Context.WIFI_P2P_SERVICE));
+        deviceClientSystem.setChannel(this, getMainLooper());
+
+      //  new WifiP2pManager.ActionListener();
+
+        //deviceClientSystem.Discovery();
+
+       //array of crap to show = deviceClientSystem.getPossiblehosts;
 
         //We need to launch a discovery fuinction and populate the layout with buttons tht corresposnsd to the ids of the host!!!
         //Fpor now this will be a single button
