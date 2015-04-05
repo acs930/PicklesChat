@@ -90,7 +90,6 @@ public class ClientSystem implements WifiP2pManager.PeerListListener,ChannelList
     public void discovery()
     {
         manager.requestPeers(channel, peerListListener);
-
     }
     public List getHosts()
     {

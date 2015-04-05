@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
@@ -18,19 +19,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class ClientSelection extends ActionBarActivity {
+public class ClientSelection extends Activity {
 
 
     private List<WifiP2pDevice> hostIds;
     private static final String TAG = ClientSelection.class.getSimpleName();
-    public ClientSystem deviceClientSystem = new ClientSystem();
-    private RadioGroup radioGroup;
+    private ClientSystem deviceClientSystem = new ClientSystem();
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        radioGroup = (RadioGroup) findViewById(R.id.radiobuttons);
         setContentView(R.layout.activity_client_selection);
         deviceClientSystem.setManager((WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE));
         deviceClientSystem.setChannel(this, getMainLooper());
@@ -54,7 +53,15 @@ public class ClientSelection extends ActionBarActivity {
     public void onHostClick(View v)
     {
         //int whichButton = v.getId();
-        Log.d(TAG, "ID: " + v.getId() + " ButtonClicked");
+
+        RadioGroup myGroup = ((RadioGroup) findViewById((R.id.radios)));
+        Log.d(TAG, "Test: " + myGroup.getCheckedRadioButtonId());
+
+        /*
+        Need to make sure that the checked radio button can be used as the id for finding the device from hostIds list
+        WifiP2pDevice selectedDevice = hostIds.get(myGroup.getCheckedRadioButtonId());
+        deviceClientSystem.connect(selectedDevice);*/
+
         //Connect to the selected host, get the id of the host button and run the wifi connect fucntion
         Intent intent = new Intent(getApplicationContext(), LobbyMain.class);
         startActivity(intent);
@@ -63,12 +70,20 @@ public class ClientSelection extends ActionBarActivity {
 
     public void updateHostList()
     {
-        //radioGroup.clearCheck();
+        RadioGroup myGroup = ((RadioGroup) findViewById((R.id.radios)));
+
+        //myGroup.removeAllViews();
+
+       RadioButton testButton = new RadioButton(this);
+        myGroup.addView(testButton);
+        testButton.setText("This is a test");
+
+
         for(WifiP2pDevice device: hostIds)
         {
             RadioButton newButton = new RadioButton(this);
             newButton.setText((device.deviceName));
-            radioGroup.addView(newButton);
+            myGroup.addView(newButton);
         }
 
     }
@@ -96,7 +111,7 @@ public class ClientSelection extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void onDiscoverClick()
+    public void onDiscoverClick(View v)
     {
         deviceClientSystem.discovery();
         hostIds = deviceClientSystem.getHosts();
@@ -117,18 +132,6 @@ public class ClientSelection extends ActionBarActivity {
 
     }
 
-
-    public void refresh()
-    {
-        //This will run the discovery thing
-        //add ids to the array
-        //and draw them to the screen every time the function is run
-    }
-
-    public boolean ConnectToHost()
-    {
-        return true;
-    }
 
     /* This is going to need to run the discover peers function from the client system class
         to populate the inital list of host connections
