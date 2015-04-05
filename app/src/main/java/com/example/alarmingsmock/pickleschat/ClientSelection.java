@@ -1,7 +1,9 @@
 package com.example.alarmingsmock.pickleschat;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -9,25 +11,35 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
-public class ClientSelection extends ActionBarActivity {
+public class ClientSelection extends Activity {
 
 
-    public int[] hostIds;
+    private List<WifiP2pDevice> hostIds;
     private static final String TAG = ClientSelection.class.getSimpleName();
-    public ClientSystem deviceClientSystem = new ClientSystem();
+    private ClientSystem deviceClientSystem = new ClientSystem();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_client_selection);
-        deviceClientSystem.setManager((WifiP2pManager)getSystemService(Context.WIFI_P2P_SERVICE));
+        deviceClientSystem.setManager((WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE));
         deviceClientSystem.setChannel(this, getMainLooper());
+        //deviceClientSystem.setActivity((Activity) this.getApplicationContext());
+        hostIds = deviceClientSystem.getHosts();
+        getTrueHosts();
+        updateHostList();
+        //Log.d(TAG, )
 
-      //  new WifiP2pManager.ActionListener();
 
-        //deviceClientSystem.Discovery();
 
        //array of crap to show = deviceClientSystem.getPossiblehosts;
 
@@ -41,10 +53,38 @@ public class ClientSelection extends ActionBarActivity {
     public void onHostClick(View v)
     {
         //int whichButton = v.getId();
-        Log.d(TAG, "ID: " + v.getId() + " ButtonClicked");
+
+        RadioGroup myGroup = ((RadioGroup) findViewById((R.id.radios)));
+        Log.d(TAG, "Test: " + myGroup.getCheckedRadioButtonId());
+
+        /*
+        Need to make sure that the checked radio button can be used as the id for finding the device from hostIds list
+        WifiP2pDevice selectedDevice = hostIds.get(myGroup.getCheckedRadioButtonId());
+        deviceClientSystem.connect(selectedDevice);*/
+
         //Connect to the selected host, get the id of the host button and run the wifi connect fucntion
         Intent intent = new Intent(getApplicationContext(), LobbyMain.class);
         startActivity(intent);
+
+    }
+
+    public void updateHostList()
+    {
+        RadioGroup myGroup = ((RadioGroup) findViewById((R.id.radios)));
+
+        //myGroup.removeAllViews();
+
+       RadioButton testButton = new RadioButton(this);
+        myGroup.addView(testButton);
+        testButton.setText("This is a test");
+
+
+        for(WifiP2pDevice device: hostIds)
+        {
+            RadioButton newButton = new RadioButton(this);
+            newButton.setText((device.deviceName));
+            myGroup.addView(newButton);
+        }
 
     }
 
@@ -71,20 +111,32 @@ public class ClientSelection extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void DiscoverHosts()
+    public void onDiscoverClick(View v)
     {
-        //populate the host array with different host ids
+        deviceClientSystem.discovery();
+        hostIds = deviceClientSystem.getHosts();
+        getTrueHosts();
+        updateHostList();
+
     }
 
-    public void refresh()
+    public void getTrueHosts()
     {
-        //This will run the discovery thing
-        //add ids to the array
-        //and draw them to the screen every time the function is run
+        for(WifiP2pDevice cDevice : hostIds)
+        {
+            if(!cDevice.isGroupOwner())
+            {
+                hostIds.remove(cDevice);
+            }
+        }
+
     }
 
-    public boolean ConnectToHost()
-    {
-        return true;
-    }
+
+    /* This is going to need to run the discover peers function from the client system class
+        to populate the inital list of host connections
+        Also gonna need to filter out other client devices and only view those acting as hosts
+        refresh will run the refresh thing and see if any other clietns are available
+        connect runs the connect to a selected device that was clicked on by the user
+     */
 }
