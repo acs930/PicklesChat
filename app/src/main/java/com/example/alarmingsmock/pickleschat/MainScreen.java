@@ -38,6 +38,8 @@ public class MainScreen extends ActionBarActivity {
     {
           //int whichButton = v.getId();
         Log.d(TAG, "ID: " + v.getId() + " HOST");
+        Intent intent = new Intent(getApplicationContext(), HostSetup.class);
+        startActivity(intent);
 
 
     }
