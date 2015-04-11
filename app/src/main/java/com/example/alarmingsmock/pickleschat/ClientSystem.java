@@ -18,14 +18,18 @@ import android.net.wifi.p2p.WifiP2pManager.ChannelListener;
 import android.net.wifi.p2p.WifiP2pManager.ConnectionInfoListener;
 import android.os.Looper;
 import android.util.Log;
+
+import java.io.IOException;
 import java.net.InetAddress;
+import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by AlarmingSmock on 3/30/15.
  */
-public class ClientSystem implements WifiP2pManager.PeerListListener,ChannelListener {
+public class ClientSystem implements WifiP2pManager.PeerListListener,ChannelListener,ConnectionInfoListener {
 
     private static final String TAG = ClientSelection.class.getSimpleName();
     private WifiP2pManager manager;
@@ -37,6 +41,9 @@ public class ClientSystem implements WifiP2pManager.PeerListListener,ChannelList
     private WifiP2pManager.PeerListListener peerListListener;
     //private WifiP2pManager.ConnectionInfoListener connectionListener;
     private Activity activity;  //This is the activity the object is currently in, should be set each time the context is changed if possible
+    private Socket clientSocket;
+
+    private static final int SERVERPORT = 5000;
 
     private static ClientSystem ourInstance = new ClientSystem();
 
@@ -114,7 +121,7 @@ public class ClientSystem implements WifiP2pManager.PeerListListener,ChannelList
             //check if wifi p2p is on
             int state = intent.getIntExtra(manager.EXTRA_WIFI_STATE, -1);
             if (state == manager.WIFI_P2P_STATE_ENABLED) {
-                this.setIsWifiP2pEnabled(false);
+                this.setIsWifiP2pEnabled(true);
             } else {
                 this.setIsWifiP2pEnabled(false);
             }
@@ -167,17 +174,41 @@ public class ClientSystem implements WifiP2pManager.PeerListListener,ChannelList
     }
 
     //@Override
+    //This should create a thread on the client when a connection to the host is found and chosen
     public void onConnectionInfoAvailable(final WifiP2pInfo info)
     {
-        //String groupOwnerAddress =  info.groupOwnerAddress.getHostAddress();
+        String hostAddress =  info.groupOwnerAddress.getHostAddress();
+
+       /* try {
+           InetAddress ownerIP = InetAddress.getByName(hostAddress);
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }*/
+
         if(info.groupFormed && info.isGroupOwner)
         {
             //This won't ever run cause I'm a client
+            Log.d(TAG, "Why am I running?");
         }
         else if(info.groupFormed) {
             //Create client thread to connect to group owner
+            try {
+                clientSocket = new Socket(hostAddress, SERVERPORT);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            new Thread((Runnable) clientSocket);
         }
 
+    }
+
+    public String getWifiStatus()
+    {
+        if(isWifiP2pEnabled)
+            return "true";
+        else
+            return "false";
     }
 
     //Need to find the owner intent number of all the devices

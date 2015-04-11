@@ -42,6 +42,10 @@
             android:name=".Chat"
             android:label="@string/title_activity_chat" >
         </activity>
+        <activity
+            android:name=".HostSetup"
+            android:label="@string/title_activity_host_setup" >
+        </activity>
     </application>
 
 </manifest>

@@ -37,6 +37,8 @@ public class ClientSelection extends Activity {
         hostIds = deviceClientSystem.getHosts();
         getTrueHosts();
         updateHostList();
+
+        Log.d(TAG,deviceClientSystem.getWifiStatus());
         //Log.d(TAG, )
 
 
@@ -85,6 +87,9 @@ public class ClientSelection extends Activity {
             newButton.setText((device.deviceName));
             myGroup.addView(newButton);
         }
+
+        Log.d(TAG,deviceClientSystem.getWifiStatus());
+
 
     }
 
