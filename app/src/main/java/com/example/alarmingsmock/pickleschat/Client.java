@@ -20,11 +20,11 @@ public class Client extends Service {
     public ClientSystem theClient;
 
     private Intent thisIntent;
-    String selectedHost;
+    public String selectedHost;
 
     private final IBinder clientBinder = new LocalBinder();
 
-    BroadcastReceiver hostReceiver = new BroadcastReceiver() {
+   /* BroadcastReceiver hostReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             //Log.d(TAG, intent.toString());
@@ -32,7 +32,7 @@ public class Client extends Service {
             selectedHost = intent.getStringExtra("deviceAddress");
 
         }
-    };
+    };*/
 
 
     public Client() {
@@ -46,11 +46,13 @@ public class Client extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId)
     {
-        Log.d(TAG, "TEST");
+        //Log.d(TAG, "TEST");
         //new clientAsync().execute();
 
        Log.d(TAG, intent.getStringExtra("deviceAddress").toString());
         selectedHost = intent.getStringExtra("deviceAddress").toString();
+        System.out.println("Gah: " + selectedHost);
+
         thisIntent = intent;
         return START_STICKY;
     }
@@ -63,7 +65,7 @@ public class Client extends Service {
         theClient.setChannel(this, getMainLooper());
         IntentFilter filter = new IntentFilter();
         //filter.addAction(Intent.ACTION_SCREEN_ON);
-        registerReceiver(hostReceiver, filter);
+        //registerReceiver(hostReceiver, filter);
 
     }
 
@@ -71,7 +73,7 @@ public class Client extends Service {
     public void onDestroy()
     {
         //Won't get destroyed
-        unregisterReceiver(hostReceiver);
+        //unregisterReceiver(hostReceiver);
 
     }
 
@@ -89,7 +91,9 @@ public class Client extends Service {
     {
         String address = "deviceAddress";
 
+        //Log.d(TAG, selectedHost);
 
+        System.out.println("Huh: " + selectedHost);
         new clientConnect().execute(selectedHost);
     }
 
@@ -110,10 +114,15 @@ public class Client extends Service {
         @Override
         protected Void doInBackground(String... Params)
         {
-            Log.d(TAG, "AMHERE");
-            //String deviceAddress = Params[0];
-            //Log.d(TAG, deviceAddress);
-            //theClient.connect(deviceAddress);
+            //Log.d(TAG, "Ugh");
+            for(int i= 0; i < Params.length; i ++)
+            {
+                System.out.println(i + " " + Params[i]);
+            }
+            String deviceAddress = Params[0];
+            //Log.d(TAG, selectedHost);
+            System.out.println("host: " + deviceAddress);
+            theClient.connect(selectedHost);
             return null;
         }
     }
