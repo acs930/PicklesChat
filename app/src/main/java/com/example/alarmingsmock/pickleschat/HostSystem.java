@@ -6,16 +6,21 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.NetworkInfo;
+import android.net.wifi.WifiManager;
+import android.net.wifi.p2p.WifiP2pConfig;
 import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pDeviceList;
+import android.net.wifi.p2p.WifiP2pGroup;
 import android.net.wifi.p2p.WifiP2pInfo;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.os.AsyncTask;
 import android.os.Looper;
 import android.net.wifi.p2p.WifiP2pManager.Channel;
+import android.text.format.Formatter;
 import android.util.Log;
 
 import java.io.IOException;
+import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.ServerSocket;
@@ -30,7 +35,7 @@ import java.util.List;
  */
 public class HostSystem extends BroadcastReceiver implements WifiP2pManager.PeerListListener,WifiP2pManager.ChannelListener {
 
-    private static final String TAG = ClientSelection.class.getSimpleName();
+    private static final String TAG = Host.class.getSimpleName();
     private WifiP2pManager manager;
     private final IntentFilter intentFilter;
     private Channel channel;
@@ -39,6 +44,12 @@ public class HostSystem extends BroadcastReceiver implements WifiP2pManager.Peer
     private WifiP2pManager.PeerListListener peerListListener;
     private Activity activity;
     public static InetAddress hostAddress = null;
+
+    private WifiP2pGroup myGroup = null;
+    private WifiP2pDevice myDevice;
+
+    public String deviceName;
+    public String deviceAddress;
 
     Thread serverThread;
     private ServerSocket hostSocket;
@@ -55,21 +66,7 @@ public class HostSystem extends BroadcastReceiver implements WifiP2pManager.Peer
     public HostSystem() {
         intentFilter = new IntentFilter();
         receiver = null;
-        isWifiP2pEnabled = false;
-    }
-
-    public void setAddress()
-    {
-        try {
-            hostAddress = InetAddress.getLocalHost();
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
-        }
-        try {
-            hostSocket = new ServerSocket(6000, 0, hostAddress);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        //isWifiP2pEnabled = false;
     }
 
     @Override
@@ -105,16 +102,11 @@ public class HostSystem extends BroadcastReceiver implements WifiP2pManager.Peer
             {
                 //Connected to other device
                 //request connection info to get group owner IP
-                manager.requestConnectionInfo(channel, (WifiP2pManager.ConnectionInfoListener) activity);
+                //manager.requestConnectionInfo(channel, (WifiP2pManager.ConnectionInfoListener) activity);
 
 
             }
         }
-    }
-
-    @Override
-    public void onChannelDisconnected() {
-
     }
 
     public void setIsWifiP2pEnabled(boolean isWifiP2pEnabled) {
@@ -131,9 +123,57 @@ public class HostSystem extends BroadcastReceiver implements WifiP2pManager.Peer
         channel =  manager.initialize(theContext,theMainLoop, null);
     }
 
-    @Override
-    public void onPeersAvailable(WifiP2pDeviceList peers) {
+    public void createGroup()
+    {
+        WifiP2pManager.ActionListener tempListener = new WifiP2pManager.ActionListener() {
+            @Override
+            public void onSuccess() {
+                Log.d(TAG, "Something worked");
+            }
 
+            @Override
+            public void onFailure(int reason) {
+                Log.d(TAG, "Failed");
+            }
+        };
+        manager.requestGroupInfo(channel, new WifiP2pManager.GroupInfoListener() {
+            @Override
+            public void onGroupInfoAvailable(WifiP2pGroup group) {
+                myGroup = group;
+                Log.d(TAG, myGroup.toString());
+            }
+        });
+        /*if(myGroup != null) {
+            manager.removeGroup(channel, tempListener);
+            Log.d(TAG, "Woop");
+        }*/
+        //else {
+            manager.createGroup(channel, tempListener);
+            Log.d(TAG, "Der it is");
+        //}
+    }
+
+    public void getGroupInfo()
+    {
+        manager.requestGroupInfo(channel, new WifiP2pManager.GroupInfoListener() {
+            @Override
+            public void onGroupInfoAvailable(WifiP2pGroup group) {
+                myGroup = group;
+                myDevice = group.getOwner();
+                Log.d(TAG, myDevice.toString());
+            }
+        });
+    }
+
+    public void setAddress()
+    {
+        Log.d(TAG, "IAMHERE");
+        try {
+            hostSocket = new ServerSocket(SERVERPORT, 0); //Might not wanna do this til I know my IP
+            Log.d(TAG, "Server socket made");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void setActivity(Activity currentActivity)
@@ -165,4 +205,42 @@ public class HostSystem extends BroadcastReceiver implements WifiP2pManager.Peer
         else
             return "false";
     }
+
+    @Override
+    public void onPeersAvailable(WifiP2pDeviceList peers) {
+
+    }
+
+    /*things host needs to do in background:
+
+     */
+
+    private class HostAsyncTasks extends AsyncTask<String, String, String>
+    {
+
+        @Override
+        protected String doInBackground(String... params) {
+            //theServer = new HostSystem();//HostSystem.getInstance();
+            //theServer.setAddress();
+            //theServer.setManager((WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE));
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            Log.d(TAG, "UGHHGHGHGHGHG");
+            super.onPostExecute(s);
+        }
+
+        protected void onProgressUpdate()
+        {}
+
+    }
+
+    @Override
+    public void onChannelDisconnected() {
+
+    }
 }
+
+
