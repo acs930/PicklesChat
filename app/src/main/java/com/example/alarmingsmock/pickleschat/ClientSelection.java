@@ -149,7 +149,6 @@ public class ClientSelection extends Activity {
 
     }
 
-
     public void getTrueHosts()
     {
         for(WifiP2pDevice cDevice : hostIds)
