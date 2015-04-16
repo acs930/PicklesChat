@@ -60,10 +60,10 @@ public class HostLobbyMain extends ActionBarActivity {
     public void onChatClick(View v)
     {
         //int whichButton = v.getId();
-        Log.d(TAG, "ID: " + v.getId() + " Game");
+        Log.d(TAG, "ID: " + v.getId() + " Chat");
         //Connect to the selected host, get the id of the host button and run the wifi connect fucntion
-      //  Intent intent = new Intent(getApplicationContext(), Chat.class);
-      //  startActivity(intent);
+        Intent intent = new Intent(getApplicationContext(), Chat.class);
+        startActivity(intent);
 
     }
 

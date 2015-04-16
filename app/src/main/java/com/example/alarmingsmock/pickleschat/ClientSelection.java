@@ -30,6 +30,7 @@ public class ClientSelection extends Activity {
     Client clientService;
     boolean mBound = false;
     Intent clientIntent;
+    String selectedDeviceName;
 
 
     @Override
@@ -43,7 +44,6 @@ public class ClientSelection extends Activity {
         super.onStart();
         clientIntent = new Intent(this, Client.class);
         bindService(clientIntent, mConnection, Context.BIND_AUTO_CREATE);
-        //startService(clientIntent);
 
     }
 
@@ -88,11 +88,19 @@ public class ClientSelection extends Activity {
 
     public void onHostClick(View v)
     {
-        Bundle clientBundle = clientIntent.getExtras();  new Bundle();
-        String deviceAddress = getSelectedDevice().deviceAddress;
-        clientBundle.putString("deviceAddress", deviceAddress);
+        //stopService(new Intent(this, Client.class));
+        Intent connectIntent = new Intent(this, Client.class);
+        String deviceAddress = getSelectedDevice();//.deviceAddress;
+        //Log.d(TAG, deviceAddress);
+        connectIntent.putExtra("deviceAddress", deviceAddress);
+        //bindService(connectIntent, mConnection, Context.BIND_AUTO_CREATE);
+        startService(connectIntent);
+        Log.d(TAG, "OLAH");
         clientService.Connect();
-        return;
+        //Log.d(TAG, "UGHGHGHGGH");
+
+        //Intent intent = new Intent(getApplicationContext(), LobbyMain.class);
+        //startActivity(intent);
     }
 
     public void updateHostList()
@@ -115,7 +123,7 @@ public class ClientSelection extends Activity {
         }
     }
 
-    public WifiP2pDevice getSelectedDevice()
+    public String getSelectedDevice()
     {
         RadioGroup myGroup = ((RadioGroup) findViewById((R.id.radios)));
 
@@ -130,22 +138,14 @@ public class ClientSelection extends Activity {
 
         Log.d(TAG, selection);
 
-        for(int i = 0; i < hostIds.size(); i++)
-        {
-            Log.d(TAG,hostIds.get(i).deviceName);
-            if(hostIds.get(i).deviceName == selection)
-                selectedDevice = hostIds.get(i);
-        }
-
-        Log.d(TAG, selectedDevice.toString());
 
         //This is where I am  needs to check what in the if statement to chekc
         //After this pass it throught he bundle and then connect to the address
         //Then things should work
         //Then work on getting a thing to be sent
 
-
-        return selectedDevice;
+        selectedDeviceName = selection;
+        return selection;
 
     }
 

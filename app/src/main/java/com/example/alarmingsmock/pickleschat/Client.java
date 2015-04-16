@@ -1,8 +1,10 @@
 package com.example.alarmingsmock.pickleschat;
 
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.os.AsyncTask;
@@ -18,8 +20,19 @@ public class Client extends Service {
     public ClientSystem theClient;
 
     private Intent thisIntent;
+    String selectedHost;
 
     private final IBinder clientBinder = new LocalBinder();
+
+    BroadcastReceiver hostReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            //Log.d(TAG, intent.toString());
+            Log.d(TAG, "BROADCAST GOT");
+            selectedHost = intent.getStringExtra("deviceAddress");
+
+        }
+    };
 
 
     public Client() {
@@ -36,6 +49,8 @@ public class Client extends Service {
         Log.d(TAG, "TEST");
         //new clientAsync().execute();
 
+       Log.d(TAG, intent.getStringExtra("deviceAddress").toString());
+        selectedHost = intent.getStringExtra("deviceAddress").toString();
         thisIntent = intent;
         return START_STICKY;
     }
@@ -46,6 +61,9 @@ public class Client extends Service {
         theClient = new ClientSystem();
         theClient.setManager((WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE));
         theClient.setChannel(this, getMainLooper());
+        IntentFilter filter = new IntentFilter();
+        //filter.addAction(Intent.ACTION_SCREEN_ON);
+        registerReceiver(hostReceiver, filter);
 
     }
 
@@ -53,6 +71,8 @@ public class Client extends Service {
     public void onDestroy()
     {
         //Won't get destroyed
+        unregisterReceiver(hostReceiver);
+
     }
 
     //Use this to search for people to connect to from activities
@@ -68,12 +88,9 @@ public class Client extends Service {
     public void Connect()
     {
         String address = "deviceAddress";
-        String value = null;
-        if (thisIntent !=null && thisIntent.getExtras()!=null) {
-            value = thisIntent.getExtras().getString(address);
-        }
 
-        new clientConnect().execute(value);
+
+        new clientConnect().execute(selectedHost);
     }
 
 
@@ -93,12 +110,18 @@ public class Client extends Service {
         @Override
         protected Void doInBackground(String... Params)
         {
-            String deviceAddress = Params[0];
-            Log.d(TAG, deviceAddress);
-            theClient.connect(deviceAddress);
+            Log.d(TAG, "AMHERE");
+            //String deviceAddress = Params[0];
+            //Log.d(TAG, deviceAddress);
+            //theClient.connect(deviceAddress);
             return null;
         }
     }
+
+    //The device addreess getting is messed up
+    //Then connect will be messed up als
+    // Might need to get the address instead of name(currently gets device name form the list)
+    
     public class ClientConnectTask extends AsyncTask<String, Integer, Void>
     {
 
