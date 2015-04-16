@@ -7,18 +7,42 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ListView;
 
 
 public class Chat extends ActionBarActivity {
 
 
+    private ChatArrayAdapter adp;
+    private ListView list;
+    private EditText chatText;
+    private Button sendButton;
+    Intent in;
+    private boolean side = false;
+
     private static final String TAG = ClientSelection.class.getSimpleName();
+
+    public Chat() {
+    }
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
+        Intent i = getIntent();
+
+
+        sendButton=(Button)findViewById(R.id.sendButton);
+
+        list = (ListView)findViewById(R.id.listView);
+
+        adp = new ChatArrayAdapter(getApplicationContext(), R.layout.activity_chat);
+
+        chatText =(EditText)findViewById(R.id.chat);
+
     }
 
     public void onLeaveClick(View v)
@@ -26,7 +50,7 @@ public class Chat extends ActionBarActivity {
         //int whichButton = v.getId();
         Log.d(TAG, "ID: " + v.getId() + " ButtonClicked");
         //Send a message to the server saying that the client has left the room
-        //Delete all sutff related to game that was stored locally
+        //Delete all stuff related to game that was stored locally
         Intent intent = new Intent(getApplicationContext(), LobbyMain.class);
         startActivity(intent);
 
