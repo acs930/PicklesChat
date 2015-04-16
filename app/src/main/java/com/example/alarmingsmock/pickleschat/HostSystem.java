@@ -208,7 +208,7 @@ public class HostSystem extends BroadcastReceiver implements WifiP2pManager.Peer
 
     @Override
     public void onPeersAvailable(WifiP2pDeviceList peers) {
-
+            System.out.println(peers.toString());
     }
 
     /*things host needs to do in background:

@@ -173,23 +173,29 @@ public class ClientSystem implements WifiP2pManager.PeerListListener,ChannelList
 
     public void connect(String chosenDevice)
     {
-
+        System.out.println(chosenDevice);
         WifiP2pConfig config = new WifiP2pConfig();
         config.deviceAddress = chosenDevice;
         config.wps.setup = WpsInfo.PBC;
+        //System.out.println("HELLO");
+
 
         manager.connect(channel, config, new ActionListener() {
             @Override
             public void onSuccess() {
                 //Wifibroadcast notifys
-                Log.d(TAG,"Look Pigs are flying");
+               // Log.d(TAG,);
+                System.out.println("Look Pigs are flying");
+
             }
 
             @Override
             public void onFailure(int reason) {
-                Log.d(TAG, "Connection failed, output result to screen");
+                //Log.d(TAG, "Connection failed, output result to screen");
+                System.out.println("Connect failed, but it tried");
+
             }
-        } );
+        } );//*/
 
     }
 

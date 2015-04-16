@@ -20,6 +20,7 @@ import android.widget.RadioGroup;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 
 
 public class ClientSelection extends Activity {
@@ -30,6 +31,9 @@ public class ClientSelection extends Activity {
     Client clientService;
     boolean mBound = false;
     Intent clientIntent;
+    String selectedDeviceAddress;
+
+    //WifiP2pDevice selectedDevice;
 
 
     @Override
@@ -43,7 +47,6 @@ public class ClientSelection extends Activity {
         super.onStart();
         clientIntent = new Intent(this, Client.class);
         bindService(clientIntent, mConnection, Context.BIND_AUTO_CREATE);
-        //startService(clientIntent);
 
     }
 
@@ -88,11 +91,42 @@ public class ClientSelection extends Activity {
 
     public void onHostClick(View v)
     {
-        Bundle clientBundle = clientIntent.getExtras();  new Bundle();
-        String deviceAddress = getSelectedDevice().deviceAddress;
-        clientBundle.putString("deviceAddress", deviceAddress);
-        clientService.Connect();
-        return;
+        final Intent connectIntent = new Intent(this, Client.class);
+        final String deviceAddress = getSelectedDevice();//.deviceAddress;
+        final CountDownLatch latch = new CountDownLatch(1);
+        connectIntent.putExtra("deviceAddress", deviceAddress);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                startService(connectIntent);
+                Log.d(TAG, "OLAH");
+                latch.countDown();
+                //Log.d(TAG, "UGHGHGHGGH");
+            }
+        }).start();
+
+        final CountDownLatch newLatch = new CountDownLatch(1);
+        try {
+            latch.await();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                clientService.Connect();
+                latch.countDown();
+
+            }
+        }).start();
+        //stopService(new Intent(this, Client.class));
+        //Log.d(TAG, deviceAddress);
+        //bindService(connectIntent, mConnection, Context.BIND_AUTO_CREATE);
+
+
+        //Intent intent = new Intent(getApplicationContext(), LobbyMain.class);
+        //startActivity(intent);
     }
 
     public void updateHostList()
@@ -115,7 +149,7 @@ public class ClientSelection extends Activity {
         }
     }
 
-    public WifiP2pDevice getSelectedDevice()
+    public String getSelectedDevice()
     {
         RadioGroup myGroup = ((RadioGroup) findViewById((R.id.radios)));
 
@@ -124,40 +158,44 @@ public class ClientSelection extends Activity {
 
         WifiP2pDevice selectedDevice = null;
         View radioButton = myGroup.findViewById(id);
-        int radioId = myGroup.indexOfChild(radioButton);
-        RadioButton btn = (RadioButton) myGroup.getChildAt(radioId);
+        //int radioId = myGroup.indexOfChild(radioButton);
+        RadioButton btn = (RadioButton) findViewById( myGroup.getCheckedRadioButtonId());
         String selection = (String) btn.getText();
-
-        Log.d(TAG, selection);
+        myGroup.getCheckedRadioButtonId();
+        System.out.println(selection);
 
         for(int i = 0; i < hostIds.size(); i++)
         {
-            Log.d(TAG,hostIds.get(i).deviceName);
-            if(hostIds.get(i).deviceName == selection)
+            //Log.d(TAG,hostIds.get(i).deviceName);
+            System.out.println("LOLO " + hostIds.get(i).deviceName);
+            if(hostIds.get(i).deviceName.equals(selection))
                 selectedDevice = hostIds.get(i);
         }
 
-        Log.d(TAG, selectedDevice.toString());
+        System.out.println(selectedDevice.toString());
+        //Log.d(TAG, selectedDevice.toString());
+        //Log.d(TAG, selection);
+
 
         //This is where I am  needs to check what in the if statement to chekc
         //After this pass it throught he bundle and then connect to the address
         //Then things should work
         //Then work on getting a thing to be sent
 
-
-        return selectedDevice;
+        selectedDeviceAddress = selectedDevice.deviceAddress;
+        return selectedDeviceAddress;
 
     }
 
     public void getTrueHosts()
     {
-        for(WifiP2pDevice cDevice : hostIds)
+        /*for(WifiP2pDevice cDevice : hostIds)
         {
             if(!cDevice.isGroupOwner())
             {
                 hostIds.remove(cDevice);
             }
-        }
+        }*/
 
     }
 
