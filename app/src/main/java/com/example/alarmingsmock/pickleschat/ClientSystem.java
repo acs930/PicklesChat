@@ -16,6 +16,7 @@ import android.net.wifi.p2p.WifiP2pManager.ActionListener;
 import android.net.wifi.p2p.WifiP2pManager.Channel;
 import android.net.wifi.p2p.WifiP2pManager.ChannelListener;
 import android.net.wifi.p2p.WifiP2pManager.ConnectionInfoListener;
+import android.os.AsyncTask;
 import android.os.Looper;
 import android.util.Log;
 
@@ -42,6 +43,7 @@ public class ClientSystem implements WifiP2pManager.PeerListListener,ChannelList
     //private WifiP2pManager.ConnectionInfoListener connectionListener;
     private Activity activity;  //This is the activity the object is currently in, should be set each time the context is changed if possible
     private Socket clientSocket;
+    public boolean isSearching = false;
 
     private static final int SERVERPORT = 5000;
 
@@ -96,6 +98,21 @@ public class ClientSystem implements WifiP2pManager.PeerListListener,ChannelList
     //This manually calls the request the current peer list
     public void discovery()
     {
+        if(!isSearching)
+        {
+            manager.discoverPeers(channel, new ActionListener() {
+                @Override
+                public void onSuccess() {
+                    Log.d(TAG, "Peers available!");
+                }
+
+                @Override
+                public void onFailure(int reason) {
+
+                }
+            });
+            isSearching = true;
+        }
         manager.requestPeers(channel, peerListListener);
     }
     public List getHosts()
@@ -113,6 +130,7 @@ public class ClientSystem implements WifiP2pManager.PeerListListener,ChannelList
     {
 
     }
+
     public void onReceive(Context context, Intent intent)
     {
         String action = intent.getAction();
@@ -145,6 +163,7 @@ public class ClientSystem implements WifiP2pManager.PeerListListener,ChannelList
             {
                 //Connected to other device
                 //request connection info to get group owner IP
+                Log.d(TAG, "Requesting info");
                 manager.requestConnectionInfo(channel, (ConnectionInfoListener) activity);
 
 
@@ -152,17 +171,18 @@ public class ClientSystem implements WifiP2pManager.PeerListListener,ChannelList
         }
     }
 
-    public void connect(WifiP2pDevice chosenDevice)
+    public void connect(String chosenDevice)
     {
 
         WifiP2pConfig config = new WifiP2pConfig();
-        config.deviceAddress = chosenDevice.deviceAddress;
+        config.deviceAddress = chosenDevice;
         config.wps.setup = WpsInfo.PBC;
 
         manager.connect(channel, config, new ActionListener() {
             @Override
             public void onSuccess() {
                 //Wifibroadcast notifys
+                Log.d(TAG,"Look Pigs are flying");
             }
 
             @Override
@@ -177,13 +197,7 @@ public class ClientSystem implements WifiP2pManager.PeerListListener,ChannelList
     //This should create a thread on the client when a connection to the host is found and chosen
     public void onConnectionInfoAvailable(final WifiP2pInfo info)
     {
-        String hostAddress =  info.groupOwnerAddress.getHostAddress();
-
-       /* try {
-           InetAddress ownerIP = InetAddress.getByName(hostAddress);
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
-        }*/
+        String hostName =  info.groupOwnerAddress.getHostName();
 
         if(info.groupFormed && info.isGroupOwner)
         {
@@ -193,7 +207,9 @@ public class ClientSystem implements WifiP2pManager.PeerListListener,ChannelList
         else if(info.groupFormed) {
             //Create client thread to connect to group owner
             try {
-                clientSocket = new Socket(hostAddress, SERVERPORT);
+                Log.d(TAG, "Opening socket up to host");
+                clientSocket = new Socket(hostName, SERVERPORT);
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -202,6 +218,12 @@ public class ClientSystem implements WifiP2pManager.PeerListListener,ChannelList
         }
 
     }
+
+    public void sendDataOverSocket(int testData)
+    {
+
+    }
+
 
     public String getWifiStatus()
     {
@@ -213,6 +235,11 @@ public class ClientSystem implements WifiP2pManager.PeerListListener,ChannelList
 
     //Need to find the owner intent number of all the devices
     //
+
+    /* Things client needs to do in background
+
+     */
+
 
 
 }

@@ -21,7 +21,7 @@ public class HostSetup extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_host_setup);
-        new HostAsync();
+        //new HostAsync();
         //theServer.setChannel(this, getMainLooper());
         //Log.d(TAG, theServer.hostAddress.toString());
         //Log.d(TAG, theServer.getWifiStatus());
@@ -49,27 +49,5 @@ public class HostSetup extends Activity {
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    public class HostAsync extends AsyncTask<String, String, String>
-    {
-
-        @Override
-        protected String doInBackground(String... params) {
-            theServer = new HostSystem();//HostSystem.getInstance();
-            theServer.setAddress();
-            //theServer.setManager((WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE));
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-            Log.d(TAG, "UGHHGHGHGHGHG");
-            super.onPostExecute(s);
-        }
-
-        protected void onProgressUpdate()
-        {}
-
     }
 }

@@ -46,6 +46,22 @@
             android:name=".HostSetup"
             android:label="@string/title_activity_host_setup" >
         </activity>
+
+        <service
+            android:name=".Host"
+            android:enabled="true"
+            android:exported="true" >
+        </service>
+        <service
+            android:name=".Client"
+            android:enabled="true"
+            android:exported="true" >
+        </service>
+
+        <activity
+            android:name=".HostLobbyMain"
+            android:label="@string/title_activity_host_lobby_main" >
+        </activity>
     </application>
 
 </manifest>
