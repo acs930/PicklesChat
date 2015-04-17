@@ -106,6 +106,12 @@ public class Client extends Service {
         }
     }
 
+    public void runGetGroupInfo()
+    {
+        new getGroupInfo().execute();
+    }
+
+
 
     //A bunch of async tasks to do each thing I need
 
@@ -130,30 +136,14 @@ public class Client extends Service {
     //The device addreess getting is messed up
     //Then connect will be messed up als
     // Might need to get the address instead of name(currently gets device name form the list)
-    
-    public class ClientConnectTask extends AsyncTask<String, Integer, Void>
+    public class getGroupInfo extends  AsyncTask<Void, Void, Void>
     {
-
         @Override
-        protected Void doInBackground(String... Action) {
-
-            String actionCheck = Action[0];
-            switch(actionCheck)
-            {
-                case "Ugh":
-                    break;
-                case "Connect":
-                    break;
-                case "Send":
-                    break;
-                case "Receive":
-                    break;
-                case "Other":
-                    break;
-            }
-
+        protected Void doInBackground(Void... params){
+            theClient.clientGetGroupInfo();
             return null;
         }
+    }
 
 
         protected void onPostExecute(String s) {
@@ -164,5 +154,5 @@ public class Client extends Service {
         protected void onProgressUpdate()
         {}
 
-    }
+
 }

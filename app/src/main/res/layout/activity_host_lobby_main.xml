@@ -71,4 +71,14 @@
         android:layout_alignEnd="@+id/textView5"
         android:onClick = "setUpClick"/>
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Show connected Folk"
+        android:id="@+id/button3"
+        android:layout_above="@+id/chatButton"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:onClick = "testStuff"/>
+
 </RelativeLayout>

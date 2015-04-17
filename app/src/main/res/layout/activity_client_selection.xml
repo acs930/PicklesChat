@@ -40,4 +40,16 @@
         android:layout_alignRight="@+id/hostConnection"
         android:layout_alignEnd="@+id/hostConnection"></RadioGroup>
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Join Lobby"
+        android:id="@+id/button5"
+        android:layout_alignTop="@+id/discoverButton"
+        android:layout_alignRight="@+id/hostConnection"
+        android:layout_alignEnd="@+id/hostConnection"
+        android:layout_marginRight="25dp"
+        android:layout_marginEnd="25dp"
+        android:onClick="runChat"/>
+
 </RelativeLayout>

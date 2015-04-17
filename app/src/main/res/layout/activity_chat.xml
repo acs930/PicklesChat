@@ -4,7 +4,8 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
-    tools:context="com.example.alarmingsmock.pickleschat.Chat">
+    tools:context="com.example.alarmingsmock.pickleschat.Chat"
+    android:background="@color/background_material_dark">
 
 
     <Button
@@ -21,7 +22,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="80dp"
-    />
+        android:layout_below="@+id/exitButton" />
 
     <RelativeLayout
         android:id="@+id/form"
@@ -51,6 +52,16 @@
         android:id="@+id/sendButton"
         android:layout_alignBottom="@+id/chat"
         android:layout_alignParentRight="true"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Demo"
+        android:id="@+id/button4"
+        android:layout_above="@+id/listView"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:onClick="runDemo"/>
 
 </RelativeLayout>
 

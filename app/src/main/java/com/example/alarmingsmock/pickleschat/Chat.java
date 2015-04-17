@@ -1,5 +1,8 @@
 package com.example.alarmingsmock.pickleschat;
 
+import android.os.AsyncTask;
+import android.os.Handler;
+import android.os.SystemClock;
 import android.view.View.OnKeyListener;
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
@@ -15,6 +18,9 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.database.DataSetObserver;
 
+import java.util.concurrent.CountDownLatch;
+import java.util.logging.LogRecord;
+
 public class Chat extends ActionBarActivity {
 
 
@@ -24,6 +30,7 @@ public class Chat extends ActionBarActivity {
     private ListView listView;
     private EditText chatText;
     private Button buttonSend;
+    int count = 0;
 
     Intent intent;
     private boolean side = false;
@@ -77,6 +84,18 @@ public class Chat extends ActionBarActivity {
         return true;
     }
 
+    private boolean sendChatMessage(String theMessage){
+        chatArrayAdapter.add(new ChatMessage(side, theMessage));
+        chatText.setText("");
+        side = !side;
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return true;
+    }
+
 
 
     public void onLeaveClick(View v)
@@ -111,5 +130,41 @@ public class Chat extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void runDemo(View v)
+    {
+        String[] words = new String[5];
+        words[0] = "Hello";
+        words[1] = "Testing, test";
+        words[2] = "Oh well look there";
+        words[3] = "~(*_*)~";
+        words[4] = "LOLOLOLOLOLOL";
+
+        if(count >= 4)
+            count = 0;
+
+        sendChatMessage(words[count]);
+
+        count++;
+
+
+        // }
+    }
+
+    public void runWait()
+    {
+
+        new runWait().execute();
+    }
+
+
+    public class runWait extends AsyncTask<Void, Void, Void>
+    {
+        @Override
+        protected Void doInBackground(Void... params){
+            sendChatMessage("LOLOLOLOLOLOL");
+            return null;
+        }
     }
 }

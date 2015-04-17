@@ -48,6 +48,12 @@ public class HostLobbyMain extends ActionBarActivity {
 
     }
 
+    public void testStuff(View v)
+    {
+        hostService.rungroupInfo();
+
+    }
+
     public void setUpClick(View v)
     {
         hostService.runCreateGroup();

@@ -19,6 +19,8 @@ import android.net.wifi.p2p.WifiP2pManager.Channel;
 import android.text.format.Formatter;
 import android.util.Log;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Inet6Address;
 import java.net.InetAddress;
@@ -26,6 +28,7 @@ import java.net.NetworkInterface;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.List;
 
@@ -153,6 +156,25 @@ public class HostSystem extends BroadcastReceiver implements WifiP2pManager.Peer
         //}
     }
 
+    public void justGetGroup()
+    {
+        Collection<WifiP2pDevice> allStuff = myGroup.getClientList();
+        Object[] array = allStuff.toArray();
+        for(int i = 0; i < array.length; i++)
+        {
+            System.out.println(array[i].toString());
+        }
+    }
+
+    public void sendToAll()
+    {
+
+
+
+    }
+
+
+
     public void getGroupInfo()
     {
         manager.requestGroupInfo(channel, new WifiP2pManager.GroupInfoListener() {
@@ -169,7 +191,7 @@ public class HostSystem extends BroadcastReceiver implements WifiP2pManager.Peer
     {
         Log.d(TAG, "IAMHERE");
         try {
-            hostSocket = new ServerSocket(SERVERPORT, 0); //Might not wanna do this til I know my IP
+            hostSocket = new ServerSocket(SERVERPORT); //Might not wanna do this til I know my IP
             Log.d(TAG, "Server socket made");
         } catch (IOException e) {
             e.printStackTrace();
@@ -184,13 +206,14 @@ public class HostSystem extends BroadcastReceiver implements WifiP2pManager.Peer
     public void onConnectionInfoAvailable(final WifiP2pInfo info) {
         //InetAddress groupOwnerAddress = info.groupOwnerAddress.getHostAddress();
 
-
+        System.out.println("in connection info available");
         if (info.groupFormed && info.isGroupOwner) {
             //This always runs cause I'm a host
             // make a new socket add to list, associate with the client so can always recognize
             // or maybe not and just be able to broadcast out to everyhting
             try {
                 clientSockets.add(hostSocket.accept());
+                System.out.println("Client Sock got");
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -214,6 +237,92 @@ public class HostSystem extends BroadcastReceiver implements WifiP2pManager.Peer
     /*things host needs to do in background:
 
      */
+
+    public void serverSocketThread()
+    {
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                Socket currentClient;
+                DataInputStream dataInputStream = null;
+                DataOutputStream dataOutputStream = null;
+
+                try {
+                    while(true) {
+                        currentClient = hostSocket.accept();
+
+
+                        dataInputStream = new DataInputStream(
+                                currentClient.getInputStream());
+
+                        String message;
+
+                        message = dataInputStream.readUTF();
+
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
+
+    public void getAllClientsConnected()
+    {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Socket currentClient = null;
+
+                while (true)
+                {
+                    for(int i =0; i< clientSockets.size(); i++)
+                    {
+                        System.out.println("Ohohohohoho");
+                    }
+                }
+
+            }
+        }).start();
+
+        //This is where we decided to jjust to a demo
+
+
+    }
+
+
+
+    public class socketMagic extends AsyncTask<Void, Void, Void>
+    {
+        @Override
+        protected Void doInBackground(Void... params)
+        {
+            try {
+                clientSockets.add(hostSocket.accept());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+
+    }
+
+    public class updateChatAll extends AsyncTask<Void, Void, Void>
+    {
+        @Override
+        protected Void doInBackground(Void... params)
+        {
+            for (int i = 0 ; i < clientSockets.size(); i++)
+            {
+               // hostSocket.  clientSockets.get(i);
+            }
+            return null;
+        }
+
+    }
 
     private class HostAsyncTasks extends AsyncTask<String, String, String>
     {

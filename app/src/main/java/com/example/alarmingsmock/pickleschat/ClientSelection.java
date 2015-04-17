@@ -89,6 +89,13 @@ public class ClientSelection extends Activity {
 
     }
 
+    public void runChat(View v)
+    {
+        Intent intent = new Intent(getApplicationContext(), LobbyMain.class);
+        startActivity(intent);
+    }
+
+
     public void onHostClick(View v)
     {
         final Intent connectIntent = new Intent(this, Client.class);

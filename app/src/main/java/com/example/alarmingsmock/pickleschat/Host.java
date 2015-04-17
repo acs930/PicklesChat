@@ -68,6 +68,11 @@ public class Host extends Service {
         new getGroupInfo().execute();
     }
 
+    public void rungroupInfo()
+    {
+       // new runGroup().execute();
+    }
+
     public class setHostAddress extends AsyncTask<Void, Void, Void>
     {
         @Override
@@ -95,6 +100,8 @@ public class Host extends Service {
             return null;
         }
     }
+
+
 
 
 
