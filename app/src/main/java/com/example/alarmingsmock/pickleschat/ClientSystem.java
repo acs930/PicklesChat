@@ -10,6 +10,7 @@ import android.net.wifi.WpsInfo;
 import android.net.wifi.p2p.WifiP2pConfig;
 import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pDeviceList;
+import android.net.wifi.p2p.WifiP2pGroup;
 import android.net.wifi.p2p.WifiP2pInfo;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.net.wifi.p2p.WifiP2pManager.ActionListener;
@@ -22,7 +23,9 @@ import android.util.Log;
 
 import java.io.IOException;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.net.SocketAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
@@ -44,6 +47,8 @@ public class ClientSystem implements WifiP2pManager.PeerListListener,ChannelList
     private Activity activity;  //This is the activity the object is currently in, should be set each time the context is changed if possible
     private Socket clientSocket;
     public boolean isSearching = false;
+    private WifiP2pGroup myGroup = null;
+    private WifiP2pDevice owner = null;
 
     private static final int SERVERPORT = 5000;
 
@@ -171,6 +176,19 @@ public class ClientSystem implements WifiP2pManager.PeerListListener,ChannelList
         }
     }
 
+    public void clientGetGroupInfo()
+    {
+        manager.requestGroupInfo(channel, new WifiP2pManager.GroupInfoListener() {
+            @Override
+            public void onGroupInfoAvailable(WifiP2pGroup group) {
+                myGroup = group;
+                owner = group.getOwner();
+                System.out.println(owner.toString());
+            }
+        });
+    }
+
+
     public void connect(String chosenDevice)
     {
         System.out.println(chosenDevice);
@@ -225,9 +243,32 @@ public class ClientSystem implements WifiP2pManager.PeerListListener,ChannelList
 
     }
 
-    public void sendDataOverSocket(int testData)
+    public class socketMagic extends AsyncTask<Void, Void, Void>
     {
+        @Override
+        protected Void doInBackground(Void... params)
+        {
 
+            try {
+                clientSocket.connect((new InetSocketAddress(owner.deviceAddress, SERVERPORT))) ;
+                System.out.println("Connecting to host");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+               return null;
+        }
+
+    }
+
+    public class sendDataOverSocket extends AsyncTask<Void, Void, Void>
+    {
+        @Override
+        protected Void doInBackground(Void... params)
+        {
+
+            
+            return null;
+        }
     }
 
 
