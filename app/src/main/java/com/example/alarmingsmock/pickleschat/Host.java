@@ -70,7 +70,7 @@ public class Host extends Service {
 
     public void rungroupInfo()
     {
-        new runGroup().execute();
+       // new runGroup().execute();
     }
 
     public class setHostAddress extends AsyncTask<Void, Void, Void>
@@ -101,14 +101,7 @@ public class Host extends Service {
         }
     }
 
-    public class runGroup extends AsyncTask<Void, Void, Void>
-    {
-        @Override
-        protected Void doInBackground(Void... params){
-            theHost.justGetGroup();
-            return null;
-        }
-    }
+
 
 
 
