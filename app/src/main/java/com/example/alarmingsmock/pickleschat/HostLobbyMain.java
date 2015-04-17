@@ -31,8 +31,6 @@ public class HostLobbyMain extends ActionBarActivity {
         super.onStart();
         Intent hostIntent = new Intent(this, Host.class);
         bindService(hostIntent, mConnection, Context.BIND_AUTO_CREATE);
-       // hostService.startService(hostIntent);
-       // hostService.runSetHost();
         Log.d(TAG, "OH MY GOODNESS!");
 
         //startService(clientIntent);
@@ -54,16 +52,17 @@ public class HostLobbyMain extends ActionBarActivity {
     {
         hostService.runCreateGroup();
         hostService.runGetGroupInfo();
+        hostService.runSetHost();
     }
 
 
     public void onChatClick(View v)
     {
         //int whichButton = v.getId();
-        Log.d(TAG, "ID: " + v.getId() + " Game");
+        Log.d(TAG, "ID: " + v.getId() + " Chat");
         //Connect to the selected host, get the id of the host button and run the wifi connect fucntion
-      //  Intent intent = new Intent(getApplicationContext(), Chat.class);
-      //  startActivity(intent);
+        Intent intent = new Intent(getApplicationContext(), Chat.class);
+        startActivity(intent);
 
     }
 
